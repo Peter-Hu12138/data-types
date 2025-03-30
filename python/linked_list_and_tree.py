@@ -94,11 +94,14 @@ class LinkedList():
             but curr = curr.next is what really does the traversal
             """
 
-    def pop(self, i: int) -> Optional[Any]:
+    def pop(self, i: Optional[int] = None) -> Optional[Any]:
         """
         Pop and return the item if a valid index is given.
         Raise IndexError otherwise.
         """
+        if i is None:
+            i = self._len - 1
+
         if self._front is None:
             raise IndexError("pop from empty list")
         if i < 0:
@@ -107,7 +110,11 @@ class LinkedList():
             raise IndexError("pop index out of range")
         elif i == 0:
             item = self._front.item
-            self._front = self._front.next
+            if self._front is self._end:
+                self._front = None
+                self._end = None
+            else:
+                self._front = self._front.next
             self._len -= 1
             return item
         else:
@@ -154,7 +161,11 @@ class LinkedList():
         if self._front is None:
             return False
         if self._front.item == value:  # only case where we need to change self._front
-            self._front = self._front.next
+            if self._front is self._end:
+                self._front = None
+                self._end = None
+            else:
+                self._front = self._front.next
             self._len -= 1
             return True
 
@@ -242,6 +253,11 @@ class LinkedList():
             curr = curr.next
         return lst
 
+    def __repr__(self) -> str:
+        """
+        Returns a string representation
+        """
+        return repr(self.to_list())
     def __len__(self):
         return self._len
 
@@ -338,6 +354,28 @@ class Tree:
             return False
 
 if __name__ == "__main__":
-    a=LinkedList([1,2,3])
+    a = LinkedList([1,2,3])
     for i in a:
         print(i)
+    a.append(50)
+    assert len(a) == 4
+    assert a._end.item == 50
+    a.remove(1)
+    assert len(a) == 3
+    assert a._end.item == 50
+    a.remove(50)
+    assert len(a) == 2
+    assert a._end.item == 3
+    a.pop(1)
+    assert len(a) == 1
+    assert a._end.item == 2
+    a.insert(1, 0)
+    a.insert(100, 2)
+    assert len(a) == 3
+    assert a._end.item == 100
+    a.pop(len(a) - 1)
+    assert len(a) == 2
+    assert a._end.item == 2
+    a.pop()
+    assert len(a) == 1
+    assert a._end.item == 1
